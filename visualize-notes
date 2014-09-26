@@ -1,0 +1,42 @@
+#! /usr/bin/env python3
+
+import re
+import csv
+import datetime as dt
+import matplotlib.pyplot as plt
+
+def notes_data(filename):
+    data = {}
+
+    with open(filename, encoding='utf-8') as file:
+        reader = csv.DictReader(file)
+        for row in reversed(list(reader)):
+            date       = dt.datetime.strptime(row['date'], '%Y-%m-%d')
+            line_count = int(row['line count'])
+
+            data[date] = line_count
+
+    return data
+
+data = notes_data('/home/andrew/stats.notes.csv')
+
+start_date = min(data.keys())
+end_date   = max(data.keys())
+
+dates = []
+counts = []
+
+date = start_date
+previous_date = None
+while date <= end_date:
+    if date not in data:
+        data[date] = data[previous_date]
+
+    dates.append(date)
+    counts.append(data[date])
+
+    previous_date = date
+    date = date + dt.timedelta(1)
+
+plt.plot(dates, counts)
+plt.show()
