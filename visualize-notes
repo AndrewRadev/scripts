@@ -1,9 +1,34 @@
 #! /usr/bin/env python3
 
+import argparse
 import re
 import csv
 import datetime as dt
 import matplotlib.pyplot as plt
+
+argparser = argparse.ArgumentParser(description="Visualize line counts of my notes file")
+argparser.add_argument('--since')
+argparser.add_argument('--week', action='store_true')
+argparser.add_argument('--month', action='store_true')
+args = argparser.parse_args()
+
+if args.month:
+    since = dt.date.today() - dt.timedelta(30)
+elif args.week:
+    since = dt.date.today() - dt.timedelta(7)
+elif args.since is not None:
+    since = dt.datetime.strptime(args.since, '%Y-%m-%d')
+else:
+    since = None
+
+def every_date(start_date, end_date):
+    date = start_date
+    previous_date = None
+    while date <= end_date:
+        yield date
+
+        previous_date = date
+        date = date + dt.timedelta(1)
 
 def notes_data(filename):
     data = {}
@@ -11,32 +36,35 @@ def notes_data(filename):
     with open(filename, encoding='utf-8') as file:
         reader = csv.DictReader(file)
         for row in reversed(list(reader)):
-            date       = dt.datetime.strptime(row['date'], '%Y-%m-%d')
+            date       = dt.datetime.strptime(row['date'], '%Y-%m-%d').date()
             line_count = int(row['line count'])
 
             data[date] = line_count
 
     return data
 
-data = notes_data('/home/andrew/stats.notes.csv')
+def fill_missing_dates(data):
+    start_date = min(data.keys())
+    end_date   = max(data.keys())
 
-start_date = min(data.keys())
-end_date   = max(data.keys())
+    for date in every_date(start_date, end_date):
+        if date not in data:
+            data[date] = data[date - dt.timedelta(1)]
+
+    return data
+
+data = notes_data('/home/andrew/stats.notes.csv')
+data = fill_missing_dates(data)
+
+start_date = since or min(data.keys())
+end_date = max(data.keys())
 
 dates = []
 counts = []
 
-date = start_date
-previous_date = None
-while date <= end_date:
-    if date not in data:
-        data[date] = data[previous_date]
-
+for date in every_date(start_date, end_date):
     dates.append(date)
     counts.append(data[date])
-
-    previous_date = date
-    date = date + dt.timedelta(1)
 
 plt.plot(dates, counts)
 plt.show()
