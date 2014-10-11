@@ -1,0 +1,20 @@
+#! /bin/sh
+
+# Takes the given file and creates a directory with the same name, renaming the
+# file to "notes" in that same directory.
+#
+# Useful for taking a notes file on a particular topic and "extending" it with
+# more files and resources.
+
+set -e
+
+filename=$1
+
+if [[ -z $filename ]]; then
+  echo "USAGE: directorize <filename>"
+  exit 1
+fi
+
+mv $filename directorized_$filename
+mkdir $filename
+mv directorized_$filename $filename/notes
