@@ -1,0 +1,29 @@
+#! /bin/sh
+
+set -e
+
+if [[ $# < 1 ]]; then
+  echo "USAGE: new-script <scriptname>"
+  exit 1
+fi
+
+name=$1
+
+if [ -f ~/projects/scripts/$name ]; then
+  echo "File ~/projects/scripts/$name already exists"
+  exit 1
+fi
+
+if [ -f ~/bin/$name ]; then
+  echo "File ~/bin/$name already exists"
+  exit 1
+fi
+
+echo "#! /bin/sh" >> ~/projects/scripts/$name
+echo ""           >> ~/projects/scripts/$name
+echo "set -e"     >> ~/projects/scripts/$name
+echo ""           >> ~/projects/scripts/$name
+echo "echo OK"    >> ~/projects/scripts/$name
+
+chmod +x ~/projects/scripts/$name
+ln -s ~/projects/scripts/$name ~/bin/$name
