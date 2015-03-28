@@ -1,0 +1,31 @@
+#! /bin/sh
+
+# Opens a "project" with Vim, where a "project" could be:
+#   - Defined in .vimproj for the Proj.vim plugin
+#   - A directory under ~/projects/
+#
+# Completion (copy to .zshrc):
+#
+#   _vimproj_completion() {
+#     reply=(`{ sed -n -e '/^\[/p' -e '/^\s*$/d' ~/.vimproj | sed -e 's/\[//' -e 's/]//'; /bin/ls projects } | cat | sort | uniq`)
+#   }
+#   compctl -K _vimproj_completion vimproj
+#
+
+set -e
+
+if [[ $# < 1 ]]; then
+  echo "USAGE: vimproj <project-name>"
+  exit 1
+fi
+
+project=$1
+
+if grep "\[$project\]" .vimproj > /dev/null; then
+  vim +"Proj $project" +"echomsg 'Project $project found in .vimproj'"
+elif [ -d "$HOME/projects/$project" ]; then
+  vim +"cd $HOME/projects/$project" +NERDTree +"echomsg 'Project $project found in ~/projects'"
+else
+  echo "Project $project not found in .vimproj or under ~/projects"
+  exit 1
+fi
