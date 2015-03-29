@@ -1,0 +1,47 @@
+#! /usr/bin/env ruby
+
+# Create the scaffolding for a new ruby gem named <name> in the current
+# directory.
+
+require 'fileutils'
+
+if ARGV.count < 1
+  puts "USAGE: #{__FILE__} <name>"
+  exit(1)
+end
+
+def resource(path)
+  File.expand_path(path, ENV['HOME'] + "/projects/scripts/resources")
+end
+
+def cwd(path)
+  File.join(FileUtils.getwd, path)
+end
+
+def replace(path, pattern, replacement)
+  contents = File.read(path)
+  contents.gsub! pattern, replacement
+  File.open(path, 'w') { |f| f.write(contents) }
+end
+
+name             = ARGV[0]
+camel_cased_name = name.gsub(/(?:^|_)(.)/) { $1.upcase }
+
+if File.exists? cwd(name)
+  puts "#{name} already exists here"
+  exit(1)
+end
+
+FileUtils.cp_r resource('newgem'),            '.', preserve: true, verbose: true
+FileUtils.cp_r resource('newgem/.gitignore'), '.', preserve: true, verbose: true
+FileUtils.cp_r resource('newgem/.rspec'),     '.', preserve: true, verbose: true
+
+replace cwd('newgem/lib/newgem/version.rb'), /Newgem/, camel_cased_name
+replace cwd('newgem/newgem.gemspec'),        /Newgem/, camel_cased_name
+replace cwd('newgem/newgem.gemspec'),        /newgem/, name
+
+FileUtils.mv cwd('newgem/bin/newgem'),    cwd(File.join('newgem', 'bin', name))
+FileUtils.mv cwd('newgem/lib/newgem'),    cwd(File.join('newgem', 'lib', name))
+FileUtils.mv cwd('newgem/lib/newgem.rb'), cwd(File.join('newgem', 'lib', "#{name}.rb"))
+
+FileUtils.mv cwd('newgem'), cwd(name)

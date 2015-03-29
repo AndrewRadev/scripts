@@ -1,0 +1,45 @@
+#! /usr/bin/env ruby
+
+# Create the scaffolding for a new Vim plugin named <name> in the current
+# directory.
+
+require 'fileutils'
+
+if ARGV.count < 1
+  puts "USAGE: #{__FILE__} <name>"
+  exit(1)
+end
+
+def resource(path)
+  File.expand_path(path, ENV['HOME'] + "/projects/scripts/resources")
+end
+
+def cwd(path)
+  File.join(FileUtils.getwd, path)
+end
+
+def replace(path, pattern, replacement)
+  contents = File.read(path)
+  contents.gsub! pattern, replacement
+  File.open(path, 'w') { |f| f.write(contents) }
+end
+
+name = ARGV[0]
+
+if File.exists? cwd(name)
+  puts "#{name} already exists here"
+  exit(1)
+end
+
+FileUtils.cp_r resource('newplugin'),        '.', preserve: true, verbose: true
+FileUtils.cp_r resource('newplugin/.rspec'), '.', preserve: true, verbose: true
+
+replace cwd('newplugin/doc/newplugin.txt'),    /newplugin/, name
+replace cwd('newplugin/plugin/newplugin.vim'), /newplugin/, name
+replace cwd('newplugin/README.md'),            /newplugin/, name
+
+FileUtils.mv cwd('newplugin/autoload/newplugin.vim'), cwd(File.join('newplugin', 'autoload', "#{name}.vim"))
+FileUtils.mv cwd('newplugin/doc/newplugin.txt'),      cwd(File.join('newplugin', 'doc',      "#{name}.txt"))
+FileUtils.mv cwd('newplugin/plugin/newplugin.vim'),   cwd(File.join('newplugin', 'plugin',   "#{name}.vim"))
+
+FileUtils.mv cwd('newplugin'), cwd(name)
