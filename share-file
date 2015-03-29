@@ -1,0 +1,20 @@
+#! /bin/sh
+
+# Copy the file to $remote_host with scp, named as its checksum + extension.
+# Output an HTTP link to the remote file.
+
+set -e
+
+remote_host=i.andrewradev.com
+
+if [ -z $1 ]; then
+  echo "USAGE: share-file <filename>"
+  exit 1
+fi
+
+filename=$1
+extension=${filename##*.}
+checksum=`md5sum $filename | cut -d' ' -f1`
+
+scp $filename $remote_host:/home/andrew/shared_images/$checksum.$extension > /dev/null
+echo http://$remote_host/$checksum.$extension
