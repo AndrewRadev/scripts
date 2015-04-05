@@ -1,0 +1,13 @@
+#! /usr/bin/env ruby
+
+# Runs an `ack` with the given query over all bundled gems.
+
+if ARGV.length < 1
+  puts "USAGE: ack-gems <query>"
+  exit 1
+end
+
+require 'bundler'
+
+paths = Bundler.load.specs.map(&:full_gem_path)
+system("ack '#{ARGV[0]}' #{paths.join(' ')}")
