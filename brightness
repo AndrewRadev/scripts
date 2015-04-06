@@ -1,0 +1,35 @@
+#! /bin/sh
+
+# A VERY hardware-specific script that changes the brightness levels on my
+# laptop. Called by mappings built into my window manager.
+#
+# To find the right file to work with on your machine (or if you're Future Me
+# with a new laptop), try something like:
+#
+#   find /sys -name brightness
+#
+# USAGE:
+#
+#   $ brightness up   # brightness goes 1 up, capped at 15
+#   $ brightness down # brightness goes 1 down, capped at 0
+#   $ brightness      # get current level
+#
+
+set -e
+
+brightness_file=/sys/devices/pci0000:00/0000:00:02.0/backlight/acpi_video1/brightness
+
+current_brightness=$(cat $brightness_file)
+
+if [[ "$@" == 'up' ]]; then
+  brightness=$(($current_brightness + 1))
+elif [[ "$@" == 'down' ]]; then
+  brightness=$(($current_brightness - 1))
+elif [[ "$@" != "" ]]; then
+  brightness=$@
+else
+  echo $current_brightness
+  exit 0
+fi
+
+echo $brightness | sudo tee $brightness_file
