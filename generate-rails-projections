@@ -1,0 +1,41 @@
+#! /usr/bin/env ruby
+
+require 'find'
+require 'json'
+require 'active_support/inflector'
+
+if not File.directory?('app')
+  puts "Doesn't look like a rails project"
+  exit 1
+end
+
+builtins = %w(assets controllers helpers mailers models views)
+
+projections = {}
+Dir['app/*'].each do |path|
+  dir = path.gsub(/^app\//, '')
+  next if builtins.include? dir
+
+  command_name = dir.singularize
+
+  if command_name == dir
+    # wasn't plural, ignore
+    next
+  end
+
+  projections["app/#{dir}/*.rb"] = {
+    'type'      => command_name,
+    'alternate' => "spec/#{dir}/{}_spec.rb",
+  }
+end
+
+# see if we have factories
+factory_dirs = `find spec/ -path '*factories'`.strip.split("\n")
+
+if not factory_dirs.empty?
+  projections["#{factory_dirs.first}/*.rb"] = {
+    'command' => 'factory'
+  }
+end
+
+puts JSON.pretty_generate(projections)
