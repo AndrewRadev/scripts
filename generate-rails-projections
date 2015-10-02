@@ -1,5 +1,13 @@
 #! /usr/bin/env ruby
 
+# Tim Pope's "projectionist" and "rails.vim" plugins use a file usually named
+# ".projections.json".
+#
+# This script is supposed to be run in a rails app's root. It tries to find any
+# additional concepts to create commands for (like "jobs", "decorators", etc.),
+# generate the relevant json for this file and output it to stdout. It can then
+# easily be piped to .projections.json and then edited.
+
 require 'find'
 require 'json'
 require 'active_support/inflector'
