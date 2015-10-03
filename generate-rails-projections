@@ -19,7 +19,13 @@ end
 
 builtins = %w(assets controllers helpers mailers models views)
 
-projections = {}
+# Check if we should add to existing projections
+if File.exists?('.projections.json')
+  projections = JSON.load(File.read('.projections.json'))
+else
+  projections = {}
+end
+
 Dir['app/*'].each do |path|
   dir = path.gsub(/^app\//, '')
   next if builtins.include? dir
@@ -31,19 +37,21 @@ Dir['app/*'].each do |path|
     next
   end
 
-  projections["app/#{dir}/*.rb"] = {
-    'type'      => command_name,
-    'alternate' => "spec/#{dir}/{}_spec.rb",
-  }
+  glob = "app/#{dir}/*.rb"
+  if not projections.key? glob
+    projections[glob] = {
+      'type'      => command_name,
+      'alternate' => "spec/#{dir}/{}_spec.rb",
+    }
+  end
 end
 
 # see if we have factories
 factory_dirs = `find spec/ -path '*factories'`.strip.split("\n")
 
-if not factory_dirs.empty?
-  projections["#{factory_dirs.first}/*.rb"] = {
-    'command' => 'factory'
-  }
+glob = "#{factory_dirs.first}/*.rb"
+if not factory_dirs.empty? and not projections.key? glob
+  projections[glob] = {'command' => 'factory'}
 end
 
 puts JSON.pretty_generate(projections)
