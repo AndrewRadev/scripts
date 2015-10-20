@@ -1,0 +1,44 @@
+#! /usr/bin/env ruby
+
+# USAGE:
+#
+#   git delete-merged-branches
+#
+# Makes a list of all merged branches except master and the current one, and
+# prompts you to delete them, one by one.
+
+require 'io/console'
+
+merged_branches = `git branch --merged`.
+  split("\n").
+  map(&:strip).
+  compact.
+  reject { |line| line =~ /master/ || line =~ /^\*/ }
+count = merged_branches.count
+n = 1
+
+if count == 0
+  exit
+end
+
+puts
+puts "> Merged branches:"
+puts
+puts merged_branches
+puts
+
+merged_branches.each do |branch|
+  char = ''
+  while char !~ /[ynq]/
+    print "> Delete branch: #{branch} (#{n}/#{count})? [y/n/q] "
+    char = STDIN.getch
+    puts
+  end
+
+  case char
+  when 'y' then system("git branch -d #{branch}")
+  when 'q' then exit
+  end
+
+  n += 1
+end
