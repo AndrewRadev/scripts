@@ -30,17 +30,23 @@ Dir['app/*'].each do |path|
   dir = path.gsub(/^app\//, '')
   next if builtins.include? dir
 
-  command_name = dir.singularize
+  type = dir.singularize
 
-  if command_name == dir
+  if type == dir
     # wasn't plural, ignore
     next
   end
 
-  glob = "app/#{dir}/*.rb"
+  # if there are already files in there, do they end in `_type.rb`?
+  if Dir["app/#{dir}/*_#{type}.rb"].empty?
+    glob = "app/#{dir}/*.rb"
+  else
+    glob = "app/#{dir}/*_#{type}.rb"
+  end
+
   if not projections.key? glob
     projections[glob] = {
-      'type'      => command_name,
+      'type'      => type,
       'alternate' => "spec/#{dir}/{}_spec.rb",
     }
   end
