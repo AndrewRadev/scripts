@@ -1,0 +1,33 @@
+#! /usr/bin/env ruby
+
+require 'json'
+
+# Tim Pope's "projectionist" plugin uses a file usually named
+# ".projections.json".
+#
+# This script is supposed to be run in an ember app's root. Right now, it
+# simply outputs a set of defaults that probably makes sense for most ember
+# apps, but should be edited later.
+
+puts JSON.pretty_generate({
+  "app/routes/*.coffee": {
+    "type": "route",
+    "alternate": "app/controllers/{}.hbs",
+  },
+  "app/controllers/*.coffee": {
+    "type": "controller",
+    "alternate": "app/templates/{}.hbs",
+  },
+  "app/templates/*.hbs": {
+    "type": "template",
+    "alternate": "app/routes/{}.coffee",
+  },
+  "app/components/*.coffee": {
+    "type": "component",
+    "alternate": "app/templates/components/{}.hbs",
+  },
+  "app/templates/components/*.hbs": {
+    "type": "ctemplate",
+    "alternate": "app/components/{}.coffee",
+  }
+})
