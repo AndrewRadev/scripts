@@ -16,6 +16,7 @@ merged_branches = `git branch --merged`.
   reject { |line| line =~ /master/ || line =~ /^\*/ }
 count = merged_branches.count
 n = 1
+all_confirmed = false
 
 if count == 0
   exit
@@ -29,10 +30,20 @@ puts
 
 merged_branches.each do |branch|
   char = ''
-  while char !~ /[ynq]/
-    print "> Delete branch: #{branch} (#{n}/#{count})? [y/n/q] "
-    char = STDIN.getch
-    puts
+
+  if all_confirmed
+    char = 'y'
+  else
+    while char !~ /[aynq]/
+      print "> Delete branch: #{branch} (#{n}/#{count})? [y/n/a/q] "
+      char = STDIN.getch
+      puts
+    end
+  end
+
+  if char == 'a'
+    all_confirmed = true
+    char = 'y'
   end
 
   case char
