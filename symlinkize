@@ -1,0 +1,19 @@
+#! /bin/sh
+
+# Takes the given file and moves it to a target directory. Leaves a symlink in
+# its place that points to the new location.
+
+set -e
+
+path=$1
+target_dir=${2:-`pwd`}
+
+if [[ -z $path ]]; then
+  echo "USAGE: symlinkize <path>"
+  exit 1
+fi
+
+filename=$(basename $path)
+
+mv $path $target_dir/$filename
+ln -s $target_dir/$filename $path
