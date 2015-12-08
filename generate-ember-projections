@@ -10,23 +10,38 @@ require 'json'
 # apps, but should be edited later.
 
 puts JSON.pretty_generate({
+  "app/initializers/*.coffee": {
+    "type": "initializer"
+  },
+  "app/models/*.coffee": {
+    "type": "model",
+    "alternate": "app/adapters/{}.coffee",
+  },
+  "app/adapters/*.coffee": {
+    "type": "adapter",
+    "alternate": "app/serializers/{}.coffee",
+  },
+  "app/serializers/*.coffee": {
+    "type": "serializer",
+    "alternate": "app/models/{}.coffee",
+  },
   "app/routes/*.coffee": {
     "type": "route",
     "alternate": "app/controllers/{}.coffee",
   },
   "app/controllers/*.coffee": {
     "type": "controller",
-    "alternate": "app/templates/{}.hbs",
+    "alternate": "app/templates/{}.emblem",
   },
-  "app/templates/*.hbs": {
+  "app/templates/*.emblem": {
     "type": "template",
     "alternate": "app/routes/{}.coffee",
   },
   "app/components/*.coffee": {
     "type": "component",
-    "alternate": "app/templates/components/{}.hbs",
+    "alternate": "app/templates/components/{}.emblem",
   },
-  "app/templates/components/*.hbs": {
+  "app/templates/components/*.emblem": {
     "type": "ctemplate",
     "alternate": "app/components/{}.coffee",
   }
