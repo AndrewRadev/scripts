@@ -1,0 +1,49 @@
+#! /usr/bin/env ruby
+
+# Runs a given "project", where a "project" could be:
+#   - Defined in .vimproj for the Proj.vim plugin
+#   - A directory under ~/projects/
+#
+# If given several projects, will attempt to open them in new terminal windows
+# (using urxvt).
+#
+# Completion (copy to .zshrc):
+#
+#   _proj_completion() {
+#     reply=(`{ sed -n -e '/^\[/p' -e '/^\s*$/d' ~/.vimproj | sed -e 's/\[//' -e 's/]//'; /bin/ls projects } | cat | sort | uniq`)
+#   }
+#   compctl -K _proj_completion vimproj
+#
+
+require 'inifile'
+require 'fileutils'
+
+if ARGV.length < 1
+  puts "USAGE: proj <project-name>"
+  exit 1
+end
+
+project, *other_projects = ARGV
+
+other_projects.each do |project|
+  system "urxvt -T 'runproj #{project}' -e zsh -i -c 'runproj #{project}' & disown"
+end
+
+VIMPROJ = IniFile.load("#{ENV['HOME']}/.vimproj")
+
+if not VIMPROJ[project]
+  puts "Project #{project} not found in .vimproj"
+  exit 1
+end
+
+command = VIMPROJ[project]["run"]
+path = VIMPROJ[project]["path"] || "#{ENV['HOME']}/projects/#{project}"
+
+if not command
+  puts "Don't know how to run project #{project}, no `run` entry in .vimproj file"
+  exit 1
+end
+
+FileUtils.cd path
+puts "Running project #{project} with command: #{command}"
+Kernel.exec command

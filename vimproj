@@ -4,12 +4,15 @@
 #   - Defined in .vimproj for the Proj.vim plugin
 #   - A directory under ~/projects/
 #
+# If given several projects, will attempt to open them in new terminal windows
+# (using urxvt).
+#
 # Completion (copy to .zshrc):
 #
-#   _vimproj_completion() {
+#   _proj_completion() {
 #     reply=(`{ sed -n -e '/^\[/p' -e '/^\s*$/d' ~/.vimproj | sed -e 's/\[//' -e 's/]//'; /bin/ls projects } | cat | sort | uniq`)
 #   }
-#   compctl -K _vimproj_completion vimproj
+#   compctl -K _proj_completion vimproj
 #
 
 set -e
@@ -20,6 +23,12 @@ if [[ $# < 1 ]]; then
 fi
 
 project=$1
+shift
+other_projects=$*
+
+for other_project in $other_projects; do
+  urxvt -e zsh -i -c "vimproj $other_project" & disown
+done
 
 if grep "\[$project\]" .vimproj > /dev/null; then
   vim +"Proj $project" +"echomsg 'Project $project found in .vimproj'"
