@@ -10,7 +10,7 @@
 # Completion (copy to .zshrc):
 #
 #   _proj_completion() {
-#     reply=(`{ sed -n -e '/^\[/p' -e '/^\s*$/d' ~/.vimproj | sed -e 's/\[//' -e 's/]//'; /bin/ls projects } | cat | sort | uniq`)
+#     reply=(`{ sed -n -e '/^\[/p' -e '/^\s*$/d' ~/.vimproj | sed -e 's/\[//' -e 's/]//'; /bin/ls ~/projects } | cat | sort | uniq`)
 #   }
 #   compctl -K _proj_completion vimproj
 #
@@ -30,11 +30,11 @@ for other_project in $other_projects; do
   urxvt -e zsh -i -c "vimproj $other_project" & disown
 done
 
-if grep "\[$project\]" .vimproj > /dev/null; then
-  vim +"Proj $project" +"echomsg 'Project $project found in .vimproj'"
+if grep "\[$project\]" ~/.vimproj > /dev/null; then
+  vim +"Proj $project" +"echomsg 'Project $project found in ~/.vimproj'"
 elif [ -d "$HOME/projects/$project" ]; then
   vim +"cd $HOME/projects/$project" +NERDTree +"echomsg 'Project $project found in ~/projects'"
 else
-  echo "Project $project not found in .vimproj or under ~/projects"
+  echo "Project $project not found in ~/.vimproj or under ~/projects"
   exit 1
 fi
