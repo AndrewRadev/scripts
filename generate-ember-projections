@@ -31,17 +31,21 @@ puts JSON.pretty_generate({
   },
   "app/controllers/*.coffee": {
     "type": "controller",
-    "alternate": "app/templates/{}.emblem",
+    "alternate": "app/templates/{}.hbs",
   },
-  "app/templates/*.emblem": {
+  "app/templates/*.hbs": {
     "type": "template",
     "alternate": "app/routes/{}.coffee",
   },
   "app/components/*.coffee": {
     "type": "component",
-    "alternate": "app/templates/components/{}.emblem",
+    "alternate": "app/templates/components/{}.hbs",
   },
-  "app/templates/components/*.emblem": {
+  "app/components/*/component.coffee": {
+    "type": "component",
+    "alternate": "app/components/{}/template.hbs",
+  },
+  "app/templates/components/*.hbs": {
     "type": "ctemplate",
     "alternate": "app/components/{}.coffee",
   }
