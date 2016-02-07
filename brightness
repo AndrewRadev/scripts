@@ -10,26 +10,40 @@
 #
 # USAGE:
 #
-#   $ brightness up   # brightness goes 1 up, capped at 15
-#   $ brightness down # brightness goes 1 down, capped at 0
-#   $ brightness      # get current level
+#   $ brightness up      # brightness goes 1 up
+#   $ brightness down 10 # brightness goes 10 down
+#   $ brightness get     # get current level
+#   $ brightness set 50  # set current level to 50
 #
+# Possible values for my current system: 0 to 187
 
 set -e
 
-brightness_file=/sys/devices/pci0000:00/0000:00:02.0/backlight/acpi_video1/brightness
+# brightness_file=/sys/devices/pci0000:00/0000:00:02.0/backlight/acpi_video1/brightness
+brightness_file=/sys/devices/pci0000:00/0000:00:02.0/drm/card0/card0-eDP-1/intel_backlight/brightness
 
 current_brightness=$(cat $brightness_file)
 
-if [[ "$@" == 'up' ]]; then
-  brightness=$(($current_brightness + 1))
-elif [[ "$@" == 'down' ]]; then
-  brightness=$(($current_brightness - 1))
-elif [[ "$@" != "" ]]; then
-  brightness=$@
-else
+if [[ $# < 1 ]]; then
+  echo "USAGE: brighness <up, down, set, get> [value]"
+  exit 1
+fi
+
+cmd=$1
+value=${2:-1}
+
+if [[ "$cmd" == "up" ]]; then
+  brightness=$(($current_brightness + $value))
+elif [[ "$cmd" == "down" ]]; then
+  brightness=$(($current_brightness - $value))
+elif [[ "$cmd" == "set" ]]; then
+  brightness=$value
+elif [[ "$cmd" == "get" ]]; then
   echo $current_brightness
   exit 0
+else
+  echo "Invalid command: $cmd"
+  exit 1
 fi
 
 echo $brightness | sudo tee $brightness_file
