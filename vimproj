@@ -17,7 +17,7 @@
 
 set -e
 
-if [[ $# < 1 ]]; then
+if [[ $# -lt 1 ]]; then
   echo "USAGE: vimproj <project-name>"
   exit 1
 fi

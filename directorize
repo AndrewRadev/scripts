@@ -15,6 +15,6 @@ if [[ -z $filename ]]; then
   exit 1
 fi
 
-mv $filename directorized_$filename
-mkdir $filename
-mv directorized_$filename $filename/notes
+mv "$filename" "directorized_$filename"
+mkdir "$filename"
+mv "directorized_$filename" "$filename/notes"

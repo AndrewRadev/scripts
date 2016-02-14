@@ -6,14 +6,14 @@
 set -e
 
 path=$1
-target_dir=${2:-`pwd`}
+target_dir=${2:-$(pwd)}
 
-if [[ -z $path ]]; then
+if [[ -z "$path" ]]; then
   echo "USAGE: symlinkize <path>"
   exit 1
 fi
 
-filename=$(basename $path)
+filename=$(basename "$path")
 
-mv $path $target_dir/$filename
-ln -s $target_dir/$filename $path
+mv "$path" "$target_dir/$filename"
+ln -s "$target_dir/$filename" "$path"

@@ -24,7 +24,7 @@ brightness_file=/sys/devices/pci0000:00/0000:00:02.0/drm/card0/card0-eDP-1/intel
 
 current_brightness=$(cat $brightness_file)
 
-if [[ $# < 1 ]]; then
+if [[ $# -lt 1 ]]; then
   echo "USAGE: brighness <up, down, set, get> [value]"
   exit 1
 fi
@@ -33,17 +33,17 @@ cmd=$1
 value=${2:-1}
 
 if [[ "$cmd" == "up" ]]; then
-  brightness=$(($current_brightness + $value))
+  brightness=$((current_brightness + value))
 elif [[ "$cmd" == "down" ]]; then
-  brightness=$(($current_brightness - $value))
+  brightness=$((current_brightness - value))
 elif [[ "$cmd" == "set" ]]; then
   brightness=$value
 elif [[ "$cmd" == "get" ]]; then
-  echo $current_brightness
+  echo "$current_brightness"
   exit 0
 else
   echo "Invalid command: $cmd"
   exit 1
 fi
 
-echo $brightness | sudo tee $brightness_file
+echo "$brightness" | sudo tee "$brightness_file"
