@@ -31,12 +31,12 @@ if File.exists? cwd(name)
   exit(1)
 end
 
-FileUtils.cp_r resource('newplugin'),        '.', preserve: true, verbose: true
-FileUtils.cp_r resource('newplugin/.rspec'), '.', preserve: true, verbose: true
+FileUtils.cp_r resource('newplugin'), '.', preserve: true, verbose: true
 
 replace cwd('newplugin/doc/newplugin.txt'),    /newplugin/, name
 replace cwd('newplugin/plugin/newplugin.vim'), /newplugin/, name
 replace cwd('newplugin/README.md'),            /newplugin/, name
+replace cwd('newplugin/spec/spec_helper.rb'),  /newplugin/, name
 
 FileUtils.mv cwd('newplugin/autoload/newplugin.vim'), cwd(File.join('newplugin', 'autoload', "#{name}.vim"))
 FileUtils.mv cwd('newplugin/doc/newplugin.txt'),      cwd(File.join('newplugin', 'doc',      "#{name}.txt"))
