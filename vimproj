@@ -31,9 +31,9 @@ for other_project in $other_projects; do
 done
 
 if grep "\[$project\]" ~/.vimproj > /dev/null; then
-  vim +"Proj $project" +"echomsg 'Project $project found in ~/.vimproj'"
+  vim +"Proj $project"
 elif [ -d "$HOME/projects/$project" ]; then
-  vim +"cd $HOME/projects/$project" +NERDTree +"echomsg 'Project $project found in ~/projects'"
+  vim $HOME/projects/$project
 else
   echo "Project $project not found in ~/.vimproj or under ~/projects"
   exit 1
