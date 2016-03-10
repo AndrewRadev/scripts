@@ -13,11 +13,8 @@ Gem::Specification.new do |s|
     TODO
   D
 
-  s.add_development_dependency 'rspec', '>= 2.0.0'
+  s.add_development_dependency 'rspec', '>= 3.0.0'
   s.add_development_dependency 'rake'
-
-  s.required_rubygems_version = '>= 1.3.6'
-  s.rubyforge_project         = 'newgem'
 
   s.files        = Dir['{lib}/**/*.rb', 'bin/*', 'LICENSE', '*.md']
   s.require_path = 'lib'
