@@ -48,5 +48,9 @@ puts JSON.pretty_generate({
   "app/templates/components/*.hbs": {
     "type": "ctemplate",
     "alternate": "app/components/{}.coffee",
+  },
+  "app/components/*/template.hbs": {
+    "type": "cdtemplate",
+    "alternate": "app/components/{}/component.coffee",
   }
 })
