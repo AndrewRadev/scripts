@@ -3,6 +3,7 @@
 # Runs a given "project", where a "project" could be:
 #   - Defined in .vimproj for the Proj.vim plugin
 #   - A directory under ~/projects/
+#   - A directory under ~/.vim/bundle/
 #
 # If given several projects, will attempt to open them in new terminal windows
 # (using urxvt).
@@ -10,7 +11,7 @@
 # Completion (copy to .zshrc):
 #
 #   _proj_completion() {
-#     reply=(`{ sed -n -e '/^\[/p' -e '/^\s*$/d' ~/.vimproj | sed -e 's/\[//' -e 's/]//'; /bin/ls ~/projects } | cat | sort | uniq`)
+#     reply=(`{ sed -n -e '/^\[/p' -e '/^\s*$/d' ~/.vimproj | sed -e 's/\[//' -e 's/]//'; /bin/ls ~/projects; /bin/ls ~/.vim/bundle; } | cat | sort | uniq`)
 #   }
 #   compctl -K _proj_completion vimproj
 #
