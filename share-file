@@ -6,6 +6,7 @@
 set -e
 
 remote_host=i.andrewradev.com
+remote_dir=/home/andrew/shared_images
 
 if [ -z "$1" ]; then
   echo "USAGE: share-file <filename>"
@@ -16,5 +17,5 @@ filename=$1
 extension=${filename##*.}
 checksum=$(md5sum "$filename" | cut -d' ' -f1)
 
-scp "$filename" "$remote_host:/home/andrew/shared_images/$checksum.$extension" > /dev/null
+scp "$filename" "$remote_host:$remote_dir/$checksum.$extension" > /dev/null
 echo "http://$remote_host/$checksum.$extension"
