@@ -1,0 +1,21 @@
+#! /bin/sh
+
+# Resizes a gif with gifsicle. Seems like this is the best option to resize one
+# without damage to it.
+
+set -e
+
+if [[ $# -lt 2 ]]; then
+  echo "USAGE: resize-gif <X,Y-WxH> <source> [<output>]"
+  exit 1
+fi
+
+specification=$1
+input=$2
+
+input_basename=${input%.*}
+input_extension="${input##*.}"
+
+output=${3:-"${input_basename}_resized.$input_extension"}
+
+gifsicle --crop "$specification" --output "$output" "$input"
