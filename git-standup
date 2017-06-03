@@ -1,0 +1,72 @@
+#! /usr/bin/env ruby
+
+# Show the git logs from the last working day. Yesterday, or Friday, if today
+# is a Monday.
+
+require 'date'
+require 'fileutils'
+require 'optparse'
+
+def parse_cli_options
+  options = {}
+
+  OptionParser.new do |opts|
+    opts.banner = "Usage: git standup [--since=<date>] [--author=<name>]"
+
+    opts.on("--since [OPTIONAL]", "Show commits more recent that a specific date (defaults to a weekend-aware guess of last working day)") do |since|
+      options[:since] = since
+    end
+
+    opts.on("--author [OPTIONAL]", "Show only commits from a particular author (defaults to the user defined in .gitconfig)") do |author|
+      options[:author] = author
+    end
+
+    opts.on("-v", "--verbose", "Show more commit info, like author and timestamp") do |verbose|
+      options[:verbose] = verbose
+    end
+  end.parse!
+
+  options
+end
+
+def output_log(options={})
+  # TODO (2013-05-13) Branch info would be nice
+  log_format = "%Cred%h%Creset -%Creset %s#{ '%Cgreen(%cD) %C(bold blue)<%an>' if options[:verbose] }%Creset"
+  author     = options[:author] || %x[git config user.email].strip
+
+  today      = Time.now.to_date
+  week_day   = Date::DAYNAMES[today.wday]
+
+  if week_day == 'Monday'
+    last_working_day = today - 3
+  else
+    last_working_day = today - 1
+  end
+
+  %x<git log --pretty=format:"#{log_format}" --since="#{options[:since] || last_working_day.to_s}" --author="#{author}">
+end
+
+options = parse_cli_options
+
+if system('git status > /dev/null')
+  puts output_log(options)
+end
+
+Dir['*/.git'].each do |git_dir|
+  project_dir = File.dirname(git_dir)
+  project_log = nil
+
+  FileUtils.cd(project_dir) do
+    project_log = output_log(options).strip
+  end
+
+  if project_log != ''
+    header = ">> Project: #{project_dir}"
+
+    puts "=" * header.size
+    puts header
+    puts "=" * header.size
+
+    puts project_log
+  end
+end
