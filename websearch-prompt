@@ -1,0 +1,56 @@
+#! /usr/bin/env python3
+
+import sys
+from PyQt5 import QtCore, QtGui, QtWidgets, QtWebEngineWidgets
+
+"""
+Usage:
+
+  websearch-prompt 'http://en.wikipedia.org/wiki/{0}'
+  websearch-prompt 'http://youtube.com/results?search_query={0}'
+"""
+
+class Prompt(QtWidgets.QDialog):
+    def __init__(self, search_url):
+        QtWidgets.QDialog.__init__(self)
+
+        self.search_url = search_url
+
+        font = QtGui.QFont('Helvetica', 50)
+
+        self.input = QtWidgets.QLineEdit(self)
+        self.input.setFont(font)
+        self.input.setFixedWidth(500)
+        self.input.adjustSize()
+
+        self.input.returnPressed.connect(self.on_return_pressed)
+
+    def on_return_pressed(self):
+        self.hide()
+
+        url     = self.search_url.format(self.input.text())
+        browser = Browser(url, self)
+
+        browser.show()
+
+class Browser(QtWidgets.QMainWindow):
+    def __init__(self, url, parent = None):
+        QtWidgets.QMainWindow.__init__(self, parent)
+
+        self.web_view = QtWebEngineWidgets.QWebEngineView()
+        self.setCentralWidget(self.web_view)
+
+        self.web_view.load(QtCore.QUrl(url))
+        self.web_view.show()
+
+if __name__ == "__main__":
+    # Enable auto-hidpi (which doesn't work well for me)
+    # QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling);
+
+    search_url = sys.argv[1]
+    app        = QtWidgets.QApplication(sys.argv)
+    prompt     = Prompt(search_url)
+
+    prompt.show()
+
+    sys.exit(app.exec_())
