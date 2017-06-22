@@ -1,0 +1,18 @@
+#! /bin/sh
+
+# Run the given command until it errors out. Useful for randomly-failing specs,
+# for instance.
+
+set -e
+
+if [[ $# -lt 1 ]]; then
+  echo "USAGE: until-error <command>"
+  exit 1
+fi
+
+count=1
+
+while $*; do
+  echo ">> Run $count done."
+  count=$((count+1))
+done
