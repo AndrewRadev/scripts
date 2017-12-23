@@ -1,0 +1,33 @@
+#! /bin/sh
+
+# Given a video file and and audio file, copies (temporarily) the video with no
+# sound, and then attaches that audio file as its sound. Encodes it into mp4.
+#
+# Useful for extracting audio, processing it with Audacity, and then putting it
+# back.
+
+set -e
+
+if [[ $# -lt 2 ]]; then
+  echo "USAGE: <video-file> <audio-file>"
+  exit 1
+fi
+
+input_video=$1
+input_audio=$2
+
+input_video_filename=$(basename "$input_video")
+input_video_basename="${input_video_filename%.*}"
+input_video_ext=${input_video_filename##*.}
+
+echo
+echo ">> Copying video without sound..."
+echo
+ffmpeg -i "$input_video" -an -vcodec copy "/tmp/nosound.${input_video_ext}"
+
+echo
+echo ">> Attaching sound to video..."
+echo
+mencoder -audiofile "$input_audio" "/tmp/nosound.${input_video_ext}" -ovc x264 -oac copy -o "${input_video_basename}_processed.mp4"
+
+rm "/tmp/nosound.${input_video_ext}"

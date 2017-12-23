@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# Takes the given file and moves it to a target directory. Leaves a symlink in
+# Takes the given file and moves it to the current directory. Leaves a symlink in
 # its place that points to the new location.
 
 set -e
@@ -9,7 +9,10 @@ path=$1
 target_dir=${2:-$(pwd)}
 
 if [[ -z "$path" ]]; then
-  echo "USAGE: symlinkize <path>"
+  echo "USAGE: symlinkize <real-path>"
+  echo
+  echo "  Will move the file to $(pwd)/"
+  echo
   exit 1
 fi
 

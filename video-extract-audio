@@ -1,0 +1,13 @@
+#! /bin/sh
+
+# Given a video file, extracts an MP3 with its audio.
+#
+# Useful for extracting audio, processing it with Audacity, and then putting it
+# back.
+
+set -e
+
+input=${1?}
+output=${input%.*}.mp3
+
+ffmpeg -i "$input" -vn -ar 48000 -ac 2 "$output"
