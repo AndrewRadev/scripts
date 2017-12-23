@@ -16,6 +16,8 @@
 #   $ brightness set 50  # set current level to 50
 #
 # Possible values for my current system: 0 to 187
+#
+# Note: These days, I just use https://aur.archlinux.org/packages/xbrightness/
 
 set -e
 
