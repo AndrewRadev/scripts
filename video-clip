@@ -3,16 +3,16 @@
 # Extract a clip from the given video file using ffmpeg. Encodes it into mp4.
 
 if [[ $# -lt 3 ]]; then
-  echo "USAGE: resize-video <from (00:00:00.000)> <duration (00:10:00.000)> <input> [<output>]"
+  echo "USAGE: resize-video <from (00:00:00.000)> <to (00:10:00.000)> <input> [<output>]"
   exit 1
 fi
 
 from=$1
-duration=$2
+to=$2
 input=$3
 
 input_basename=${input%.*}
 output=${4:-"${input_basename}_resized.mp4"}
 
-# mencoder -ss "$from" -endpos "$duration" -oac mp3lame  -ovc x264 "$input" -o "$output"
-ffmpeg -ss "$from" -i "$input" -t "$duration" -vcodec h264 -acodec mp3 "$output"
+# mencoder -ss "$from" -endpos "$to" -oac mp3lame  -ovc x264 "$input" -o "$output"
+ffmpeg -i "$input" -ss "$from" -to "$to" -vcodec h264 -acodec mp3 "$output"
