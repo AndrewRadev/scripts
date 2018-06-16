@@ -1,0 +1,19 @@
+#! /bin/sh
+
+if [[ $# -lt 2 ]]; then
+  echo "USAGE: video-concat <first video> <second video> [<output>]"
+  exit 1
+fi
+
+first_video=$1
+second_video=$2
+
+first_basename=${first_video%.*}
+second_basename=${second_video%.*}
+
+output=${3:-"${first_basename}_${second_basename}_merged.mp4"}
+
+ffmpeg \
+  -i "$first_video" -i "$second_video" \
+  -filter_complex "[0:v][0:a][1:v][1:a]concat=n=2:v=1:a=1[outv][outa]" \
+  -map "[outv]" -map "[outa]" "$output"
