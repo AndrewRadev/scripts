@@ -31,12 +31,12 @@ for other_project in $other_projects; do
   urxvt -e zsh -i -c "vimproj $other_project" & disown
 done
 
-if grep "\[$project\]" ~/.vimproj > /dev/null; then
+if grep "\\[$project\\]" ~/.vimproj > /dev/null; then
   vim +"Proj $project"
 elif [ -d "$HOME/.vim/bundle/$project" ]; then
-  vim $HOME/.vim/bundle/$project
+  vim "$HOME/.vim/bundle/$project"
 elif [ -d "$HOME/projects/$project" ]; then
-  vim $HOME/projects/$project
+  vim "$HOME/projects/$project"
 else
   echo "Project $project not found in ~/.vimproj or under ~/projects"
   exit 1
