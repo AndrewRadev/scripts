@@ -8,7 +8,7 @@
 
 set -e
 
-if [[ $# -lt 2 ]]; then
+if [ $# -lt 2 ]; then
   echo "USAGE: <video-file> <audio-file>"
   exit 1
 fi

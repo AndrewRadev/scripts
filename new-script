@@ -2,7 +2,7 @@
 
 set -e
 
-if [[ $# -lt 1 ]]; then
+if [ $# -lt 1 ]; then
   echo "USAGE: new-script <scriptname>"
   exit 1
 fi

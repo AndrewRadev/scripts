@@ -5,7 +5,7 @@
 
 set -e
 
-if [[ $# -lt 1 ]]; then
+if [ $# -lt 1 ]; then
   echo "USAGE: until-error <command>"
   exit 1
 fi

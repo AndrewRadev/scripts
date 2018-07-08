@@ -2,7 +2,7 @@
 
 # Extract a clip from the given video file using ffmpeg. Encodes it into mp4.
 
-if [[ $# -lt 3 ]]; then
+if [ $# -lt 3 ]; then
   echo "USAGE: video-clip <from (00:00:00.000)> <to (00:10:00.000)> <input> [<output>]"
   exit 1
 fi

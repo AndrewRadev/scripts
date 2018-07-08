@@ -1,6 +1,6 @@
 #! /bin/sh
 
-if [[ $# -lt 2 ]]; then
+if [ $# -lt 2 ]; then
   echo "USAGE: video-concat <first video> <second video> [<output>]"
   exit 1
 fi

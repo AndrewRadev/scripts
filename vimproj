@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /usr/bin/env bash
 
 # Opens a "project" with Vim, where a "project" could be:
 #   - Defined in .vimproj for the Proj.vim plugin
@@ -18,7 +18,7 @@
 
 set -e
 
-if [[ $# -lt 1 ]]; then
+if [ $# -lt 1 ]; then
   echo "USAGE: vimproj <project-name>"
   exit 1
 fi

@@ -10,7 +10,7 @@ set -e
 
 filename=$1
 
-if [[ -z $filename ]]; then
+if [ -z "$filename" ]; then
   echo "USAGE: directorize <filename>"
   exit 1
 fi

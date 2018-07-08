@@ -8,7 +8,7 @@ set -e
 path=$1
 target_dir=${2:-$(pwd)}
 
-if [[ -z "$path" ]]; then
+if [ -z "$path" ]; then
   echo "USAGE: symlinkize <real-path>"
   echo
   echo "  Will move the file to $(pwd)/"
