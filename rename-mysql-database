@@ -1,0 +1,24 @@
+#! /bin/sh
+
+# Renames a mysql database by renaming each individual table. Adapted from:
+# https://stackoverflow.com/a/2298602/853920.
+#
+# New database needs to exist, or you'll get a "generic error" from mysql.
+#
+
+set -e
+
+if [ $# -lt 2 ]; then
+  echo "USAGE: rename-mysql-database <old-name> <new-name>"
+  exit 1
+fi
+
+old_name=$1
+new_name=$2
+
+mysql='mysql -u root -s -N'
+
+for table in `$mysql -e "use $old_name;show tables from $old_name;"`; do
+  echo "Renaming $old_name.$table to $new_name.$table"
+  $mysql -e "use $old_name;rename table $old_name.$table to $new_name.$table;";
+done
