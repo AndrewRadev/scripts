@@ -5,6 +5,9 @@
 #
 # New database needs to exist, or you'll get a "generic error" from mysql.
 #
+# Note that it probably won't move stuff like views or stored procedures. But
+# for basic cases, it'll do just fine.
+#
 
 set -e
 
