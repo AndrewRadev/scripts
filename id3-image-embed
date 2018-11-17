@@ -1,0 +1,19 @@
+#! /bin/sh
+
+# Embeds the given image file onto the given mp3 file as cover art. Uses the
+# `lame` command-line utility, does it in-place via a tempfile.
+
+set -e
+
+if [ $# -lt 2 ]; then
+  echo "USAGE: id3-image-embed <mp3-filename> <image-filename>"
+  exit 1
+fi
+
+music_file=${1?}
+image_file=${2?}
+
+temp_file=$(mktemp --suffix='.mp3')
+
+lame --ti "$image_file" "$music_file" "$temp_file"
+mv "$temp_file" "$music_file"
