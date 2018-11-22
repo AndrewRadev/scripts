@@ -11,7 +11,7 @@ if ARGV.count < 1
 end
 
 def resource(path)
-  File.expand_path(path, ENV['HOME'] + "/projects/scripts/resources")
+  File.expand_path(path, __dir__ + "/resources")
 end
 
 def cwd(path)
@@ -36,6 +36,7 @@ FileUtils.cp_r resource('newgem'),            '.', preserve: true, verbose: true
 FileUtils.cp_r resource('newgem/.gitignore'), '.', preserve: true, verbose: true
 
 replace cwd('newgem/lib/newgem/version.rb'), /Newgem/, camel_cased_name
+replace cwd('newgem/lib/newgem.rb'),         /Newgem/, camel_cased_name
 replace cwd('newgem/newgem.gemspec'),        /Newgem/, camel_cased_name
 replace cwd('newgem/newgem.gemspec'),        /newgem/, name
 
