@@ -13,8 +13,12 @@ def parse_cli_options
   OptionParser.new do |opts|
     opts.banner = "Usage: git standup [--since=<date>] [--author=<name>]"
 
-    opts.on("--since [OPTIONAL]", "Show commits more recent that a specific date (defaults to a weekend-aware guess of last working day)") do |since|
-      options[:since] = since
+    opts.on("--since [OPTIONAL]", "Show commits more recent that a specific date (defaults to a weekend-aware guess of last working day)") do |time|
+      options[:since] = time
+    end
+
+    opts.on("--until [OPTIONAL]", "Show commits only until a specific date (defaults to now)") do |time|
+      options[:until] = time
     end
 
     opts.on("--author [OPTIONAL]", "Show only commits from a particular author (defaults to the user defined in .gitconfig)") do |author|
@@ -43,7 +47,7 @@ def output_log(options={})
     last_working_day = today - 1
   end
 
-  %x<git log --pretty=format:"#{log_format}" --since="#{options[:since] || last_working_day.to_s}" --author="#{author}">
+  %x<git log --pretty=format:"#{log_format}" --since="#{options[:since] || last_working_day.to_s}" --until="#{options[:until] || 'now'}" --author="#{author}">
 end
 
 options = parse_cli_options
