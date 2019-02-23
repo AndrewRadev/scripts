@@ -1,0 +1,18 @@
+#! /bin/sh
+
+set -e
+
+if [ $# -lt 1 ]; then
+  echo "USAGE: id3-image-preview <music-file.mp3>"
+  exit 1
+fi
+
+music_file=$1
+
+# Create an auto-removed file when script exits
+image_file=$(mktemp --suffix='.jpg')
+exec 3>"$image_file"
+rm "$image_file"
+
+id3-image-extract "$music_file" "$image_file"
+xdg-open "$image_file"
