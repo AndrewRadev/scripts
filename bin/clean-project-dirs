@@ -1,0 +1,45 @@
+#! /usr/bin/env ruby
+
+# Given a root dir containing project dirs, it looks for ways to clean it up
+# from artefacts that are no longer used.
+#
+# Meant to be invoked regularly in a cron job.
+
+require 'fileutils'
+require 'pathname'
+
+if ARGV.count < 1
+  STDERR.puts "USAGE: clean-project-dirs <projects-root> [<projects-root>, ...]"
+  exit 1
+end
+
+ARGV.each do |root_dir|
+  root_dir = Pathname.new(root_dir)
+
+  root_dir.each_child do |project_dir|
+    next if not File.directory?(project_dir)
+
+    puts "Cleaning #{project_dir}:"
+
+    FileUtils.cd(project_dir) do
+      Dir['*/log/*.log'].each do |log_file|
+        puts "  > Truncating logs: #{log_file}"
+        `truncate --size 0 "#{log_file}"`
+        puts "  > Truncating logs DONE"
+      end
+
+      Dir['*/tmp/*'].each do |tmp_dir|
+        puts "  > Deleting contents of tmp directory: #{tmp_dir}"
+        puts tmp_dir.inspect
+        # `rm -r "#{tmp_dir}"`
+        puts "  > Deleting contents of tmp directory DONE"
+      end
+
+      if File.exists?('Cargo.lock')
+        puts "  > Rust/cargo project: running cargo clean"
+        `cargo clean`
+        puts "  > Rust/cargo project: running cargo clean DONE"
+      end
+    end
+  end
+end
