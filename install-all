@@ -1,0 +1,26 @@
+#! /bin/sh
+
+# Install all scripts in bin/ to the given directory by symlinking them in
+# there. In case you're me and just want all of your stuff in the right place
+# on a new installation.
+
+if [ $# -lt 1 ]; then
+  echo "USAGE: ./install-all <target dir>"
+  exit 1
+fi
+
+target_dir=$1
+
+for script_name in $(ls bin/); do
+  source="$(pwd)/bin/$script_name"
+  target="$target_dir/$script_name"
+
+  if [ -L "$target" ]; then
+    echo "Skipping $target, already linked"
+  elif [ -f "$target" ]; then
+    echo "Skipping $target, file with that name exists!"
+  else
+    echo "Symlinking $source to $target"
+    ln -s "$source" "$target"
+  fi
+done

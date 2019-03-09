@@ -11,7 +11,7 @@ if ARGV.count < 1
 end
 
 def resource(path)
-  File.expand_path(path, __dir__ + "/resources")
+  File.expand_path(path, __dir__ + "/../resources")
 end
 
 def cwd(path)
