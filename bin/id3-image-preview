@@ -1,5 +1,8 @@
 #! /bin/sh
 
+# Extract an embedded image from a music file using id3-image and directly open
+# it for preview. The file is cleaned up afterwards.
+
 set -e
 
 if [ $# -lt 1 ]; then

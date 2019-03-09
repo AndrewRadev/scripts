@@ -1,0 +1,18 @@
+#! /bin/sh
+
+# Show a GUI dialog to embed an image into an mp3 file. Uses zenity and
+# id3-image.
+
+set -e
+
+if [ $# -lt 1 ]; then
+  echo "USAGE: id3-image-gui-embed <music-file.mp3>"
+  exit 1
+fi
+
+music_file=$1
+
+# Pick the image file with a file chooser
+image_file=$(zenity --file-selection --filename="$(pwd)/" --title="Select Cover Art")
+
+id3-image-embed "$music_file" "$image_file"
