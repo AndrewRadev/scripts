@@ -7,6 +7,7 @@ import datetime as dt
 import matplotlib.pyplot as plt
 
 argparser = argparse.ArgumentParser(description="Visualize line counts of my notes file")
+argparser.add_argument('filename', help="The CSV with stats on the notes file: stats.<filename>.csv")
 argparser.add_argument('--since')
 argparser.add_argument('--week', action='store_true')
 argparser.add_argument('--month', action='store_true')
@@ -53,7 +54,7 @@ def fill_missing_dates(data):
 
     return data
 
-data = notes_data('/home/andrew/stats.notes.csv')
+data = notes_data(args.filename)
 data = fill_missing_dates(data)
 
 start_date = since or min(data.keys())
