@@ -1,0 +1,18 @@
+#! /bin/sh
+
+if [ $# -lt 5 ]; then
+  echo "USAGE: video-crop <x> <y> <width> <height> <input-video.mp4>"
+  exit 1
+fi
+
+x=$1
+y=$2
+w=$3
+h=$4
+input=$5
+
+input_filename=$(basename "$input")
+input_basename="${input_filename%.*}"
+input_ext=${input_filename##*.}
+
+ffmpeg -i $input -filter:v "crop=$w:$h:$x:$y" "${input_basename}_cropped.mp4"
