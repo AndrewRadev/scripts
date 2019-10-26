@@ -1,0 +1,27 @@
+#! /usr/bin/env ruby
+
+# Given a file glob, deletes all of the files that haven't been modified in the
+# last 30 days.
+#
+# Meant to be invoked regularly in a cron job.
+
+require 'fileutils'
+require 'pathname'
+
+if ARGV.count < 1
+  STDERR.puts "USAGE: clean-old-files <file1> [<file2>, ...]"
+  exit 1
+end
+
+ARGV.each do |path|
+  path = Pathname.new(path)
+  next if not path.exist?
+  next if path.directory?
+
+  days_old = ((Time.now - path.mtime) / (24 * 3600)).round
+
+  if days_old > 30
+    puts "Deleting #{path}, #{days_old} days old (last modified: #{path.mtime})"
+    FileUtils.rm(path)
+  end
+end
