@@ -32,8 +32,7 @@ if File.exists? cwd(name)
   exit(1)
 end
 
-FileUtils.cp_r resource('newgem'),            '.', preserve: true, verbose: true
-FileUtils.cp_r resource('newgem/.gitignore'), '.', preserve: true, verbose: true
+FileUtils.cp_r resource('newgem'), '.', preserve: true, verbose: true
 
 replace cwd('newgem/lib/newgem/version.rb'), /Newgem/, camel_cased_name
 replace cwd('newgem/lib/newgem.rb'),         /Newgem/, camel_cased_name
