@@ -1,0 +1,12 @@
+#! /bin/sh
+
+set -e
+
+# Get the next commit in the flattened log history. Will this work sensibly for
+# merges and stuff? Don't know, but I'll mostly be using it for linear "part 1,
+# part 2, etc" sequences of commits.
+#
+# Found in:
+# https://stackoverflow.com/questions/2263674/how-do-i-find-the-next-commit-in-git-child-children-of-ref
+
+git log --reverse --pretty=%H master | grep -A 1 $(git rev-parse HEAD) | tail -n1 | xargs git checkout

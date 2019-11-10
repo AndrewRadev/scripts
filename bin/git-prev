@@ -1,0 +1,7 @@
+#! /bin/sh
+
+set -e
+
+# Mostly exists as a counterpart to git-next, but easier to type either way.
+
+git checkout HEAD^1
