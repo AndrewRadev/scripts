@@ -1,0 +1,23 @@
+#! /bin/sh
+
+set -e
+
+# A wrapper for `youtube-dl` with the right params to download a song with my
+# own preferences.
+
+if [[ $# -lt 1 ]]; then
+  echo "USAGE: get-youtube-song '<url>'"
+  exit 1
+fi
+
+url=$1
+
+youtube-dl \
+  --no-playlist \
+  --extract-audio \
+  --audio-format mp3 \
+  --metadata-from-title='%(artist)s - %(title)s' \
+  --output='%(title)s.%(ext)s' \
+  --embed-thumbnail \
+  --add-metadata \
+  "$url"
