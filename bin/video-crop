@@ -15,4 +15,4 @@ input_filename=$(basename "$input")
 input_basename="${input_filename%.*}"
 input_ext=${input_filename##*.}
 
-ffmpeg -i $input -filter:v "crop=$w:$h:$x:$y" "${input_basename}_cropped.mp4"
+ffmpeg -i "$input" -filter:v "crop=$w:$h:$x:$y" "${input_basename}_cropped.mp4"
