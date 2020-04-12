@@ -1,54 +1,81 @@
 #! /usr/bin/env ruby
 
+# Shows only commits that include addition or removal of TODO notes
+# (case-insensitively). Depends on the "pager" gem for pagination.
+#
+# Usage: git-todo [FLAGS]
+#
+# Where FLAGS can be anything provided to `git log` since the tool delegates to
+# it.
+
 require 'open3'
-require 'pager'
+
+begin
+  require 'pager'
+rescue LoadError
+  STDERR.puts "Warning: Please install the \"pager\" gem to get pagination: `gem install pager`"
+end
 
 class GitTodo
-  include Pager
+  include Pager if defined? Pager
+
+  def initialize
+    @is_tty = STDOUT.tty?
+  end
 
   def run
-    page
-
-    ansi_regex = /\x1b\[[0-9;]*m/
+    page if defined? Pager
 
     current_chunk = []
     in_diff       = false
     todo_found    = false
 
-    Open3.popen3('git log --color=always -p') do |stdin, stdout, _stderr|
+    Open3.popen3("git log --color=always -p #{ARGV.join(' ')}") do |stdin, stdout, _stderr|
       stdout.each_line do |line|
+        # We don't care about the input's encoding, so just consider it ASCII
         line = line.force_encoding('ASCII-8BIT')
-        plain_line = line.gsub(ansi_regex, '')
+        plain_line = strip_ansi(line)
 
         if plain_line =~ /^commit /
-          # Reset
+          # Reset state, print progress:
           if todo_found
             puts current_chunk
           end
 
-          current_chunk = [line]
+          if tty?
+            current_chunk = [line]
+          else
+            current_chunk = [plain_line]
+          end
+
           in_diff       = false
           todo_found    = false
         elsif !in_diff && plain_line =~ /^diff --git /
           # We've just started a diff
           in_diff = true
-        elsif in_diff && plain_line =~ /^[+-].*\btodo\b/i
-          # We've found a todo
+        elsif in_diff && plain_line =~ /^[+-].*\btodo\b/i && plain_line !~ /^(---|\+\+\+) /
+          # We've found a content line with a todo
           todo_found = true
 
-          if plain_line.start_with?('+')
-            # color the "+" green and the todo green and bold
-            current_chunk << plain_line.
-              gsub(/^\+/, "\e[32m+\e[0m").
-              gsub(/\b(todo)\b/i, "\e[32m\e[1m\\1\e[0m")
-          elsif plain_line.start_with?('-')
-            # color the "+" red and the todo red and bold
-            current_chunk << plain_line.
-              gsub(/^-/, "\e[31m-\e[0m").
-              gsub(/\b(todo)\b/i, "\e[31m\e[1m\\1\e[0m")
+          if tty?
+            if plain_line.start_with?('+')
+              # color the line green and the todo green and bold
+              current_chunk << "#{green}#{plain_line.strip}#{reset}".
+                gsub(/\b(todo)\b/i, "#{bold}\\1#{green}")
+            elsif plain_line.start_with?('-')
+              # color the line red and the todo red and bold
+              current_chunk << "#{red}#{plain_line.strip}#{reset}".
+                gsub(/\b(todo)\b/i, "#{bold}\\1#{red}")
+            end
+          else
+            current_chunk << plain_line
           end
         elsif !in_diff
-          current_chunk << line
+          if tty?
+            current_chunk << line
+          else
+            current_chunk << plain_line
+          end
         end
       end
 
@@ -58,6 +85,32 @@ class GitTodo
     end
   rescue Interrupt
     exit 1
+  end
+
+  private
+
+  def green
+    "\e[32m"
+  end
+
+  def red
+    "\e[31m"
+  end
+
+  def bold
+    "\e[1m"
+  end
+
+  def reset
+    "\e[0m"
+  end
+
+  def strip_ansi(text)
+    text.gsub(/\x1b\[[0-9;]*m/, '')
+  end
+
+  def tty?
+    @is_tty
   end
 end
 
