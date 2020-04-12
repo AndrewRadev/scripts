@@ -29,9 +29,8 @@ ARGV.each do |root_dir|
       end
 
       Dir['*/tmp/*'].each do |tmp_dir|
-        puts "  > Deleting contents of tmp directory: #{tmp_dir}"
-        puts tmp_dir.inspect
-        # `rm -r "#{tmp_dir}"`
+        puts "  > Deleting contents of tmp directory: #{project_dir}/#{tmp_dir}"
+        `rm -r "#{tmp_dir}"`
         puts "  > Deleting contents of tmp directory DONE"
       end
 
