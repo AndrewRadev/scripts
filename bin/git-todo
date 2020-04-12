@@ -1,0 +1,57 @@
+#! /usr/bin/env ruby
+
+require 'open3'
+
+ansi_regex = /\x1b\[[0-9;]*m/
+
+current_chunk = []
+in_diff       = false
+todo_found    = false
+
+# TODO (2020-04-07) Figure out how to output results to a pager.
+
+begin
+  Open3.popen3('git log --color=always -p') do |stdin, stdout, _stderr|
+    stdout.each_line do |line|
+      line = line.force_encoding('ASCII-8BIT')
+      plain_line = line.gsub(ansi_regex, '')
+
+      if plain_line =~ /^commit /
+        # Reset
+        if todo_found
+          puts current_chunk
+        end
+
+        current_chunk = [line]
+        in_diff       = false
+        todo_found    = false
+      elsif !in_diff && plain_line =~ /^diff --git /
+        # We've just started a diff
+        in_diff = true
+      elsif in_diff && plain_line =~ /^[+-].*\btodo\b/i
+        # We've found a todo
+        todo_found = true
+
+        if plain_line.start_with?('+')
+          # color the "+" green and the todo green and bold
+          current_chunk << plain_line.
+            gsub(/^\+/, "\e[32m+\e[0m").
+            gsub(/\b(todo)\b/i, "\e[32m\e[1m\\1\e[0m")
+        elsif plain_line.start_with?('-')
+          # color the "+" red and the todo red and bold
+          current_chunk << plain_line.
+            gsub(/^-/, "\e[31m-\e[0m").
+            gsub(/\b(todo)\b/i, "\e[31m\e[1m\\1\e[0m")
+        end
+      elsif !in_diff
+        current_chunk << line
+      end
+    end
+
+    if todo_found
+      puts current_chunk
+    end
+  end
+rescue Interrupt
+  exit 1
+end
