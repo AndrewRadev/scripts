@@ -61,11 +61,11 @@ class GitTodo
             if plain_line.start_with?('+')
               # color the line green and the todo green and bold
               current_chunk << "#{green}#{plain_line.strip}#{reset}".
-                gsub(/\b(todo)\b/i, "#{bold}\\1#{green}")
+                gsub(/\b(todo)\b/i, "#{bold}\\1#{reset}#{green}")
             elsif plain_line.start_with?('-')
               # color the line red and the todo red and bold
               current_chunk << "#{red}#{plain_line.strip}#{reset}".
-                gsub(/\b(todo)\b/i, "#{bold}\\1#{red}")
+                gsub(/\b(todo)\b/i, "#{bold}\\1#{reset}#{red}")
             end
           else
             current_chunk << plain_line
