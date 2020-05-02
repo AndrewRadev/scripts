@@ -1,0 +1,12 @@
+#! /bin/sh
+
+# Uses the `cargo-local` crate to find the dependencies' filesystem paths and
+# generate a tags file.
+
+sources=$(cargo local)
+status=$?
+if [ $status -ne 0 ]; then
+  exit $status
+fi
+
+echo "$sources" | xargs --delimiter="\n" ctags -o Cargo.tags -R

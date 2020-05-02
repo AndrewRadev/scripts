@@ -1,0 +1,24 @@
+#! /bin/sh
+
+set -e
+
+if [ $# -lt 1 ]; then
+  echo "USAGE: video-convert-to-x265 <first video> [<other video>,]"
+  exit 1
+fi
+
+for input in "$@"; do
+  if [[ $input == *".x265.mp4" ]]; then
+    echo "Skipping $input, ends in .x265.mp4"
+    continue;
+  fi
+
+  input_basename=${input%.*}
+  output="$input_basename.x265.mp4"
+
+  echo "Working on $input..."
+  ffmpeg -i "$input" -vcodec libx265 -acodec copy "$output"
+
+  echo "Done with $input, removing..."
+  rm "$input"
+done

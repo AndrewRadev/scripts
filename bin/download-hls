@@ -1,0 +1,13 @@
+#! /bin/sh
+
+# Download an HLS stream to a local file
+
+if [ $# -lt 2 ]; then
+  echo "USAGE: download-hls <stream-url> <output.mp4>"
+  exit 1
+fi
+
+input=$1
+output=$2
+
+ffmpeg -i "$input" -c copy -bsf:a aac_adtstoasc "$output"

@@ -13,6 +13,9 @@ argparser.add_argument('--week', action='store_true')
 argparser.add_argument('--month', action='store_true')
 args = argparser.parse_args()
 
+# TODO (2020-01-04) Make it accept an actual file
+# TODO (2020-01-04) Use javascript plots instead, make it a proper webpage, dashboard-like
+
 if args.month:
     since = dt.date.today() - dt.timedelta(30)
 elif args.week:

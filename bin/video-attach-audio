@@ -28,6 +28,6 @@ ffmpeg -i "$input_video" -an -vcodec copy "/tmp/nosound.${input_video_ext}"
 echo
 echo ">> Attaching sound to video..."
 echo
-mencoder -audiofile "$input_audio" "/tmp/nosound.${input_video_ext}" -ovc x264 -oac copy -o "${input_video_basename}_processed.mp4"
+mencoder -audiofile "$input_audio" "/tmp/nosound.${input_video_ext}" -ovc copy -oac copy -o "${input_video_basename}_processed.mp4"
 
 rm "/tmp/nosound.${input_video_ext}"

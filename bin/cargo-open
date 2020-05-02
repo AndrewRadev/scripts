@@ -1,0 +1,19 @@
+#! /bin/sh
+
+# Uses the `cargo-local` crate to find a crate's filesystem path and open it in
+# the default editor.
+
+if [ $# -lt 2 ]; then
+  echo "USAGE: cargo open <package-name>"
+  exit 1
+fi
+
+_subcommand=$1 # ignore the "open" subcommand
+package=$2
+src=$(cargo local $package)
+status=$?
+if [ $status -ne 0 ]; then
+  exit $status
+fi
+
+$EDITOR "$src"
