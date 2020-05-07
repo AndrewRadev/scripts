@@ -8,6 +8,13 @@
 # generate the relevant json for this file and output it to stdout. It can then
 # easily be piped to .projections.json and then edited.
 
+require 'bundler/inline'
+
+gemfile do
+  source 'https://rubygems.org'
+  gem 'activesupport', require: false
+end
+
 require 'find'
 require 'json'
 require 'active_support/inflector'
