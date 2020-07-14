@@ -13,7 +13,7 @@ fi
 input_file=$1
 top_text=$2
 bottom_text=$3
-output_file=${4:-"memed-$input_file"}
+output_file=${4:-"show:"}
 
 top_pointsize=62
 bottom_pointsize=62
