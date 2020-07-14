@@ -13,7 +13,8 @@ if [ -z "$files" ]; then
   files=$(git diff --name-only)
 fi
 
-files=$(echo $files | grep '\.rb$' | grep -v 'db/schema.rb')
+# ls 2> /dev/null -> filter out removed files
+files=$(echo $files | ls $files 2> /dev/null | grep '\.rb$' | grep -v 'db/schema.rb')
 if [ -z "$files" ]; then
   echo "No changed ruby files in git (other than maybe db/schema.rb)"
   exit 0
