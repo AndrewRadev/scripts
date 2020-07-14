@@ -1,0 +1,27 @@
+#! /bin/sh
+
+#
+# Meme an image template, taken from:
+# https://twitter.com/climagic/status/1278437675926765568
+#
+
+if [ $# -lt 3 ]; then
+  echo "USAGE: meme-text <input.png> <TOP TEXT> <BOTTOM TEXT> [<output.png>]"
+  exit 1
+fi
+
+input_file=$1
+top_text=$2
+bottom_text=$3
+output_file=${4:-"memed-$input_file"}
+
+top_pointsize=62
+bottom_pointsize=62
+
+convert "$input_file" \
+  -font impact -fill white -stroke black -strokewidth 3 \
+  -pointsize $top_pointsize \
+  -gravity north -annotate +0+20 "$top_text" \
+  -pointsize $bottom_pointsize \
+  -gravity south -annotate +0+20 "$bottom_text" \
+  "$output_file"
