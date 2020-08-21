@@ -54,17 +54,9 @@ Dir['app/*'].each do |path|
   if not projections.key? glob
     projections[glob] = {
       'type'      => type,
-      'alternate' => "spec/#{dir}/{}_spec.rb",
+      'alternate' => "spec/#{dir}/{}_#{type}_spec.rb",
     }
   end
-end
-
-# see if we have factories
-factory_dirs = `find spec/ -path '*factories'`.strip.split("\n")
-
-glob = "#{factory_dirs.first}/*.rb"
-if not factory_dirs.empty? and not projections.key? glob
-  projections[glob] = {'command' => 'factory'}
 end
 
 puts JSON.pretty_generate(projections)
