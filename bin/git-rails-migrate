@@ -1,0 +1,42 @@
+#! /usr/bin/env ruby
+
+# Find the rails migrations that were added in this branch compared to another
+# branch, and migrate them up or down (really, "down" is the likelier
+# direction, since otherwise you could just migrate everything).
+#
+# Useful when switching branches with incompatible database schemas. Can be
+# slow, because it executes the rake tasks sequentially.
+
+if ARGV.count < 2
+  STDERR.puts "USAGE: git rails-migrate <up|down> <branch>"
+  exit 1
+end
+
+direction = ARGV[0]
+branch    = ARGV[1]
+
+raise "Invalid direction, should be 'up' or 'down': #{direction}" if not %w(up down).include?(direction)
+
+files = `git diff #{branch} --name-status`.strip.split("\n").
+  select { |f| f =~ %r{^A\s+db/migrate/} }.
+  map { |f| f[%r{db/migrate/.*}] }
+
+puts "Working on files:"
+files.each do |file|
+  puts "- #{file}"
+end
+
+if direction == 'down'
+  files = files.reverse
+end
+
+files.each do |file|
+  if direction == 'down'
+    puts "Rolling back: #{file}"
+  else
+    puts "Migrating: #{file}"
+  end
+
+  timestamp = file.gsub(%r{^db/migrate/(\d+)_.*$}, '\1')
+  system("bundle exec rake db:migrate:#{direction} VERSION=#{timestamp}")
+end
