@@ -38,5 +38,8 @@ files.each do |file|
   end
 
   timestamp = file.gsub(%r{^db/migrate/(\d+)_.*$}, '\1')
-  system("bundle exec rake db:migrate:#{direction} VERSION=#{timestamp}")
+  command = "bundle exec rake db:migrate:#{direction} VERSION=#{timestamp}"
+
+  puts(command)
+  system(command, exception: true)
 end
