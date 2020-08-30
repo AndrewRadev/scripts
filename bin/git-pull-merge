@@ -1,0 +1,20 @@
+#! /usr/bin/bash
+
+# Pulls the given branch, goes back to the current one and merges it. Useful
+# for updating a PR with its base.
+
+set -e
+
+if [ $# -lt 1 ]; then
+  echo "USAGE: git pull-merge <branch>"
+  exit 1
+fi
+
+branch=$1
+
+git stash
+git checkout "$branch"
+git pull --rebase
+git checkout -
+git merge "$branch"
+git stash pop
