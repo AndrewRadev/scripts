@@ -1,5 +1,19 @@
 #! /bin/sh
 
+# This script checks git-modified files with Rubocop and reports the results.
+# It's intended to be used in a git pre-commit hook (.git/hooks/pre-commit)
+# like so:
+#
+#   git rubocop
+#
+#   if [ $? -ne 0 ]; then
+#    echo "Code must be clean before commiting"
+#    exit 1
+#   fi
+#
+# It's not perfect, for instance if you patch-add only some parts of a file,
+# the entire file is going to be checked. But it's good enough for me.
+
 # Check if we're in a git repo
 git status > /dev/null || exit 1
 
