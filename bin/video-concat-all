@@ -1,0 +1,26 @@
+#! /usr/bin/env ruby
+
+if ARGV.count < 2
+  STDERR.puts "USAGE: video-concat-all <first video> <second video> [<other video>...]"
+  exit 1
+end
+
+require 'pathname'
+
+video_paths = ARGV.map { |arg| Pathname.new(arg) }
+
+input_flags = video_paths.map { |v| "-i #{v}" }.join(' ')
+
+filter_args = video_paths.count.times.map { |i| "[#{i}:v][#{i}:a]" }.join('')
+filter_args += "concat=n=#{video_paths.count}:v=1:a=1[outv][outa]"
+
+output_path = video_paths.map do |v|
+  v.basename.sub(/#{v.extname}$/, '')
+end.join('+') + '.mp4'
+
+system([
+  "ffmpeg #{input_flags}",
+  "-filter_complex '#{filter_args}'",
+  "-map '[outv]' -map '[outa]'",
+  output_path
+].join(' '), exception: true)

@@ -1,0 +1,30 @@
+#! /usr/bin/env ruby
+
+if ARGV.count < 1
+  STDERR.puts "USAGE: video-extract-audio-all <input-video.mp4> [<input-video-2.mp4>, ...]"
+  exit 1
+end
+
+require 'open3'
+
+ARGV.each do |input|
+  basename = input.gsub(/#{File.extname(input)}$/, '')
+
+  audio_count = Open3.popen3('ffprobe', input) do |_, _, stderr|
+    stderr.read.
+      split("\n").
+      grep(/Stream #0:\d+: Audio:/).
+      count
+  end
+
+  if audio_count == 0
+    puts "No audio detected"
+    exit 1
+  end
+
+  filter_args = audio_count.times.flat_map do |n|
+    ['-map', "0:a:#{n}", '-c', 'mp3', "#{basename}_#{n}.mp3"]
+  end
+
+  system('ffmpeg', '-i', input, *filter_args, exception: true)
+end
