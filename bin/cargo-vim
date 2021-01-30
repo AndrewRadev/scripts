@@ -1,0 +1,122 @@
+#! /usr/bin/env ruby
+
+# This is a script used to take the output of `cargo build` or `cargo test` and
+# send it over to a Vim instance to plug it into its quickfix window for easy
+# error-fixing. Said Vim instance needs to:
+#
+# - Have a servername (recent Vim can be compiled with --enable-autoservername)
+# - Have a working directory equal to or under the current working directory
+#
+# The idea is I'd often run `cargo build`, see there's 50 error messages, and
+# then have to scroll up and tackle them one by one. Not to mention I usually
+# can't tell where the most recent batch of errors starts from. Occasionally,
+# with `cargo test`, there's duplicates, even.
+#
+# Now, I can rerun the same command except throw in a `vim` between the `cargo`
+# and the `build` and it'll give me a better interface to handle them.
+#
+# It would be ideal if it wasn't necessary to rerun the command, but, at least
+# for Rust, tests tend to be pretty fast. Compilation is slow, but recompiling
+# with no changes is going to be fast, so this might be good enough.
+
+require 'benchmark'
+require 'fileutils'
+require 'tempfile'
+
+if ARGV.first == 'vim'
+  # then it was called as `cargo vim <command>` and not `cargo-vim <command>`,
+  # so remove the "vim" part:
+  ARGV.shift
+end
+
+if ARGV.count < 1
+  STDERR.puts "USAGE: cargo vim <build|run|test> [args...]"
+  exit 1
+end
+
+def format_time(time)
+  return "?s" if time.nil?
+
+  if time < 1
+    "#{format_float((time * 1000).round(2))}ms"
+  elsif time < 60
+    "#{format_float(time.round(2))}s"
+  elsif time < 3600
+    minutes = time.to_i / 60
+    seconds = (time - minutes * 60).round(2)
+    "#{format_int(minutes)}m:#{format_int(seconds)}s"
+  else
+    hours = time.to_i / 3600
+    minutes = (time.to_i % 3600) / 60
+    seconds = (time - (hours * 3600 + minutes * 60)).round(2)
+    "#{format_int(hours)}h:#{format_int(minutes)}m:#{format_int(seconds)}s"
+  end
+end
+
+def format_int(value)
+  sprintf("%02d", value)
+end
+
+def format_float(value)
+  sprintf("%0.2f", value)
+end
+
+def format_result(result)
+  if result
+    # Green check mark
+    "\e[0;92m🗸\e[0m"
+  else
+    # Red cross mark
+    "\e[0;91m❌\e[0m"
+  end
+end
+
+def send_to_vim(servername, command)
+  system 'vim', '--servername', servername, '--remote-expr', command, out: '/dev/null'
+end
+
+# Find the right Vim instance to send the output to:
+vim_instances = %x[vim --serverlist].lines.map(&:strip)
+cwd           = FileUtils.pwd
+
+if vim_instances.empty?
+  STDERR.puts "Couldn't find any Vim instances with servernames"
+  exit 1
+end
+
+servername = vim_instances.find do |candidate|
+  candidate_wd = %x[vim --servername #{candidate} --remote-expr 'getcwd()'].strip
+
+  if candidate_wd.start_with?(cwd)
+    candidate
+  else
+    nil
+  end
+end
+
+if servername.nil?
+  STDERR.puts "Couldn't find any Vim instances with a working directory under #{cwd}"
+  exit 1
+end
+
+Tempfile.open('cargo-vim') do |f|
+  print "Running cargo #{ARGV.join(' ')} ... "
+  result = nil
+  measurement = Benchmark.measure do
+    result = system 'cargo', *ARGV, err: f, out: '/dev/null'
+  end
+  puts "DONE #{format_time(measurement.real)} #{format_result(result)}"
+
+  if result
+    # No errors, clear and close the quickfix list
+    send_to_vim(servername, "setqflist([])")
+    send_to_vim(servername, "execute('cclose')")
+  else
+    # There's errors, populate the quickfix list
+    send_to_vim(servername, "execute('silent compiler cargo')")
+    send_to_vim(servername, "execute('silent cfile #{f.path}')")
+    send_to_vim(servername, "execute('silent! Qfcompact')")
+    send_to_vim(servername, "execute('silent copen')")
+    exit 1
+  end
+end
