@@ -1,0 +1,42 @@
+#! /usr/bin/env ruby
+
+# Dump a JSON mapping of RSpec spec ids to their locations.
+#
+# The canonical identifier depends on the structure of the file, which requires
+# parsing. In order to *jump* to a location, however, we need a file and a
+# line. Unfortunately, different identifiers might map to the same file:line --
+# there might be multiple examples in a loop.
+#
+# Which is where this command comes in -- it runs the parser, but doesn't run
+# the tests, and is able to provide actual locations for editor integration.
+
+if ARGV.count < 1
+  STDERR.puts "USAGE: rspec-translate <spec-id>, [<spec-id>, ...]"
+  exit 1
+end
+
+require 'bundler/setup'
+require 'rspec/core'
+
+pending_spec_ids = ARGV.to_set
+mapping = {}
+
+target_files = pending_spec_ids.
+  map { |spec_id| spec_id.gsub(/\[(\d+:)*\d+\]$/, '') }.
+  uniq
+
+runner = RSpec::Core::Runner.new(RSpec::Core::ConfigurationOptions.new(target_files))
+runner.setup($stderr, $stdout)
+
+runner.world.all_examples.each do |example|
+  if pending_spec_ids.include?(example.id)
+    mapping[example.id] = example.location
+    pending_spec_ids.delete(example.id)
+  end
+
+  if pending_spec_ids.empty?
+    break
+  end
+end
+
+puts mapping.to_json
