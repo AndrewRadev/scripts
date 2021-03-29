@@ -61,13 +61,13 @@ def format_float(value)
   sprintf("%0.2f", value)
 end
 
-def format_result(result)
-  if result
-    # Green check mark
-    "\e[0;92m🗸\e[0m"
-  else
+def format_result(failure)
+  if failure
     # Red cross mark
     "\e[0;91m❌\e[0m"
+  else
+    # Green check mark
+    "\e[0;92m🗸\e[0m"
   end
 end
 
@@ -101,22 +101,23 @@ end
 
 Tempfile.open('cargo-vim') do |f|
   print "Running cargo #{ARGV.join(' ')} ... "
-  result = nil
   measurement = Benchmark.measure do
-    result = system 'cargo', *ARGV, err: f, out: '/dev/null'
+    system 'cargo', *ARGV, err: f, out: '/dev/null'
   end
-  puts "DONE #{format_time(measurement.real)} #{format_result(result)}"
+  f.rewind
+  failure = f.lines.grep(/^(error|warning)/).any?
+  puts "DONE #{format_time(measurement.real)} #{format_result(failure)}"
 
-  if result
-    # No errors, clear and close the quickfix list
-    send_to_vim(servername, "setqflist([])")
-    send_to_vim(servername, "execute('cclose')")
-  else
+  if failure
     # There's errors, populate the quickfix list
     send_to_vim(servername, "execute('silent compiler cargo')")
     send_to_vim(servername, "execute('silent cfile #{f.path}')")
     send_to_vim(servername, "execute('silent! Qfcompact')")
     send_to_vim(servername, "execute('silent copen')")
     exit 1
+  else
+    # No errors, clear and close the quickfix list
+    send_to_vim(servername, "setqflist([])")
+    send_to_vim(servername, "execute('cclose')")
   end
 end
