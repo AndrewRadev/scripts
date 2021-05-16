@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
     TODO
   EOF
 
-  s.add_development_dependency 'bundler', '~> 1.17'
-  s.add_development_dependency 'rake', '~> 12.3.3'
-  s.add_development_dependency 'rspec', '~> 3.0'
+  s.add_development_dependency 'bundler', '~> 2.2'
+  s.add_development_dependency 'rake', '~> 13.0'
+  s.add_development_dependency 'rspec', '~> 3.10'
 
   s.files            = Dir['{lib}/**/*.rb', 'bin/*']
   s.extra_rdoc_files = Dir['LICENSE', '*.md']
