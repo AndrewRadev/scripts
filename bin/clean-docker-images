@@ -1,0 +1,14 @@
+#! /bin/sh
+
+set -e
+
+# Taken from: https://blog.baudson.de/blog/stop-and-remove-all-docker-containers-and-images
+
+if [ ! -z "$(docker ps -aq)" ]; then
+  docker stop $(docker ps -aq)
+  docker rm $(docker ps -aq)
+fi
+
+if [ ! -z "$(docker images -q)" ]; then
+  docker rmi $(docker images -q)
+fi
