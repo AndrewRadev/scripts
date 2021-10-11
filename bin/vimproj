@@ -5,8 +5,7 @@
 #   - A directory under ~/projects/
 #   - A directory under ~/.vim/bundle/
 #
-# If given several projects, will attempt to open them in new terminal windows
-# (using urxvt).
+# The rest of the command-line is passed along to Vim
 #
 # Completion (copy to .zshrc):
 #
@@ -19,24 +18,22 @@
 set -e
 
 if [ $# -lt 1 ]; then
-  echo "USAGE: vimproj <project-name>"
+  echo "USAGE: vimproj <project-name> [<vim-flag>, ...]"
   exit 1
 fi
 
 project=$1
 shift
-other_projects=$*
+vim_params=$*
 
-for other_project in $other_projects; do
-  urxvt -e zsh -i -c "vimproj $other_project" & disown
-done
+# TODO debug issue with passing params along and current directory
 
 if grep "\\[$project\\]" ~/.vimproj > /dev/null; then
-  vim +"Proj $project"
+  vim +"Proj $project" $vim_params
 elif [ -d "$HOME/.vim/bundle/$project" ]; then
-  vim "$HOME/.vim/bundle/$project"
+  vim "$HOME/.vim/bundle/$project" $vim_params
 elif [ -d "$HOME/projects/$project" ]; then
-  vim "$HOME/projects/$project"
+  vim "$HOME/projects/$project" $vim_params
 else
   echo "Project $project not found in ~/.vimproj or under ~/projects"
   exit 1
