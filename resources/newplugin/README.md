@@ -1,3 +1,5 @@
+[![Build Status](https://circleci.com/gh/AndrewRadev/newplugin.vim/tree/main.svg?style=shield)](https://circleci.com/gh/AndrewRadev/newplugin.vim?branch=main)
+
 ## Usage
 
 TODO
