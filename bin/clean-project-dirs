@@ -28,10 +28,16 @@ ARGV.each do |root_dir|
         puts "  > Truncating logs DONE"
       end
 
-      Dir['*/tmp/*'].each do |tmp_dir|
-        puts "  > Deleting contents of tmp directory: #{project_dir}/#{tmp_dir}"
+      Dir['tmp'].each do |tmp_dir|
+        puts "  > Deleting tmp directory: #{project_dir}/#{tmp_dir}"
         `rm -rf "#{tmp_dir}"`
-        puts "  > Deleting contents of tmp directory DONE"
+        puts "  > Deleting tmp directory DONE"
+      end
+
+      Dir['*/tmp'].each do |tmp_dir|
+        puts "  > Deleting nested tmp directory: #{project_dir}/#{tmp_dir}"
+        `rm -rf "#{tmp_dir}"`
+        puts "  > Deleting nested tmp directory DONE"
       end
 
       if File.exists?('Cargo.lock')
