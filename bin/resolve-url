@@ -1,0 +1,10 @@
+#! /bin/sh
+
+# Taken from https://stackoverflow.com/a/3077316/853920
+
+if [ $# -lt 1 ]; then
+  echo "USAGE: resolve-url <URL>"
+  exit 1
+fi
+
+curl -Ls -o /dev/null -w %{url_effective} $1
