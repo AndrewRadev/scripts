@@ -17,6 +17,7 @@ end
 
 require 'bundler/setup'
 require 'rspec/core'
+require 'json'
 
 pending_spec_ids = ARGV.to_set
 mapping = {}
