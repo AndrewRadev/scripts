@@ -27,7 +27,7 @@ end
 builtins = %w(assets controllers helpers mailers models views)
 
 # Check if we should add to existing projections
-if File.exists?('.projections.json') && File.size('.projections.json') > 0
+if File.exist?('.projections.json') && File.size('.projections.json') > 0
   projections = JSON.load(File.read('.projections.json'))
 else
   projections = {}

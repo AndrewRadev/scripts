@@ -8,5 +8,7 @@ set -e
 #
 # Found in:
 # https://stackoverflow.com/questions/2263674/how-do-i-find-the-next-commit-in-git-child-children-of-ref
+#
+# TODO: instead of main, accept branch with completion
 
-git log --reverse --pretty=%H master | grep -A 1 $(git rev-parse HEAD) | tail -n1 | xargs git checkout
+git log --reverse --pretty=%H main | grep -A 1 $(git rev-parse HEAD) | tail -n1 | xargs git checkout

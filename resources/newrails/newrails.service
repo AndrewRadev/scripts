@@ -1,6 +1,8 @@
 # Copied from sidekiq example file
 # Place in /usr/lib/systemd/system/
 #
+# TODO sudo ln -s /home/andrew/newrails.service /usr/lib/systemd/system/newrails.service
+#
 [Unit]
 Description=newrails
 

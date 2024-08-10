@@ -40,7 +40,7 @@ ARGV.each do |root_dir|
         puts "  > Deleting nested tmp directory DONE"
       end
 
-      if File.exists?('Cargo.lock')
+      if File.exist?('Cargo.lock')
         puts "  > Rust/cargo project: running cargo clean"
         `cargo clean`
         puts "  > Rust/cargo project: running cargo clean DONE"

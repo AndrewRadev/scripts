@@ -99,19 +99,21 @@ if servername.nil?
   exit 1
 end
 
-Tempfile.open('cargo-vim') do |f|
+file = Tempfile.open('cargo-vim')
+
+begin
   print "Running cargo #{ARGV.join(' ')} ... "
   measurement = Benchmark.measure do
-    system 'cargo', *ARGV, err: f, out: '/dev/null'
+    system 'cargo', *ARGV, err: file, out: '/dev/null'
   end
-  f.rewind
-  failure = f.lines.grep(/^(error|warning)/).any?
+  file.rewind
+  failure = file.readlines.grep(/^(error|warning)/).any?
   puts "DONE #{format_time(measurement.real)} #{format_result(failure)}"
 
   if failure
     # There's errors, populate the quickfix list
     send_to_vim(servername, "execute('silent compiler cargo')")
-    send_to_vim(servername, "execute('silent cfile #{f.path}')")
+    send_to_vim(servername, "execute('silent cfile #{file.path}')")
     send_to_vim(servername, "execute('silent! Qfcompact')")
     send_to_vim(servername, "execute('silent copen')")
     exit 1
@@ -120,4 +122,7 @@ Tempfile.open('cargo-vim') do |f|
     send_to_vim(servername, "setqflist([])")
     send_to_vim(servername, "execute('cclose')")
   end
+ensure
+  file.close
+  file.unlink
 end

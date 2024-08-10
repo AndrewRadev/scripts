@@ -6,7 +6,7 @@
 set -e
 
 if [ $# -lt 2 ]; then
-  echo "USAGE: resize-gif <X,Y-WxH> <source> [<output>]"
+  echo "USAGE: resize-gif <WxH> <source> [<output>]"
   exit 1
 fi
 
@@ -18,4 +18,4 @@ input_extension="${input##*.}"
 
 output=${3:-"${input_basename}_resized.$input_extension"}
 
-gifsicle --crop "$specification" --output "$output" "$input"
+gifsicle --resize "$specification" --output "$output" "$input"

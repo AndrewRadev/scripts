@@ -2,8 +2,8 @@
 
 set -e
 
-# A wrapper for `youtube-dl` with the right params to download a song with my
-# own preferences.
+# A wrapper for `youtube-dl`/`yt-dlp` with the right params to download a song
+# with my own preferences.
 
 if [[ $# -lt 1 ]]; then
   echo "USAGE: get-youtube-song '<url>'"
@@ -12,12 +12,12 @@ fi
 
 url=$1
 
-youtube-dl \
+yt-dlp \
   --no-playlist \
   --extract-audio \
   --audio-format mp3 \
   --metadata-from-title='%(artist)s - %(title)s' \
-  --output='%(title)s.%(ext)s' \
+  --output='%(artist)s - %(title)s.%(ext)s' \
   --embed-thumbnail \
   --add-metadata \
   "$url"

@@ -17,7 +17,7 @@ for input in "$@"; do
   output="$input_basename.x265.mp4"
 
   echo "Working on $input..."
-  ffmpeg -i "$input" -vcodec libx265 -acodec copy "$output"
+  ffmpeg -i "$input" -vcodec libx265 -acodec mp3 "$output"
 
   echo "Done with $input, removing..."
   rm "$input"
