@@ -1,0 +1,24 @@
+#! /bin/sh
+
+set -e
+
+if [ $# -lt 1 ]; then
+  echo "USAGE: rmarkdown-watch <filename>"
+  exit 1
+fi
+
+render() {
+  echo "library('rmarkdown'); rmarkdown::render('$1')" | R --quiet --no-save || true
+}
+
+for file in $*; do
+  echo "Watching: $file"
+done
+
+echo
+
+# Note: The "modify" event triggers twice with Vim, but "close_write" triggers once.
+inotifywait -m -e close_write $* |
+  while read file_path file_event file_name; do
+    render "$file_path"
+  done

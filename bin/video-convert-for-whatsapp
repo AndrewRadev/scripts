@@ -1,0 +1,14 @@
+#!/bin/sh
+
+set -e
+
+if [ $# -lt 1 ]; then
+  echo "USAGE: video-convert-for-whatsapp <video>"
+  exit 1
+fi
+
+input=$1
+input_basename=${input%.*}
+output="$input_basename.whatsapp.mp4"
+
+ffmpeg -y -i "$input" -b:v 2M -bufsize 2M -codec:v h264 -b:a 128k -codec:a aac -s 960x540 "$output"

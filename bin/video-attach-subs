@@ -1,0 +1,20 @@
+#! /bin/sh
+
+# Given a video file and and subtitles file, embeds the subtitles, increasing
+# their size to 24.
+
+set -e
+
+if [ $# -lt 2 ]; then
+  echo "USAGE: <video-file> <subtitles-file>"
+  exit 1
+fi
+
+input_video=$1
+input_subs=$2
+
+input_video_filename=$(basename "$input_video")
+input_video_basename="${input_video_filename%.*}"
+input_video_ext=${input_video_filename##*.}
+
+ffmpeg -i "$input_video" -vf subtitles="$input_subs":force_style='Fontsize=24' "${input_video_basename}_subs.${input_video_ext}"
