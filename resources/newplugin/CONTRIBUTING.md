@@ -1,6 +1,6 @@
 # Contributing
 
-If you'd like to contribute to the project, you can use the usual github pull-request flow:
+If you'd like to contribute to the project, you can use the usual pull-request flow:
 
 1. Fork the project
 2. Make your change/addition, preferably in a separate branch.

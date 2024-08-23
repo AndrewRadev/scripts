@@ -16,7 +16,8 @@ INSTALLATION                                            *newplugin-installation*
 The easiest way to install the plugin is with a plugin manager:
 
 - vim-plug: https://github.com/junegunn/vim-plug
-- Vundle:   https://github.com/VundleVim/Vundle.vim
+- vundle:   https://github.com/VundleVim/Vundle.vim
+- minpac:   https://github.com/k-takata/minpac
 
 If you use one, just follow the instructions in its documentation.
 
@@ -26,7 +27,7 @@ cloning the project (or adding it as a submodule) under
 >
     mkdir -p ~/.vim/pack/andrewradev/start
     cd ~/.vim/pack/andrewradev/start
-    git clone https://github.com/andrewradev/newplugin.vim.git
+    git clone https://codeberg.org/andrewradev/newplugin.vim.git
 
     # to generate documentation tags:
     vim -u NONE -c "helptags newplugin.vim/doc" -c q
@@ -37,9 +38,9 @@ load it in your .vimrc manually with:
 >
     packadd newplugin
 <
-If you'd rather not use git, you can download the files from the "releases"
-tab and unzip them in the relevant directory:
-https://github.com/AndrewRadev/newplugin.vim/releases.
+If you'd rather not use git, you can download the files from the "tags"
+section of the "Code" tab and unzip them in the relevant directory:
+https://codeberg.org/AndrewRadev/newplugin.vim/tags.
 
 
 ==============================================================================
@@ -62,8 +63,8 @@ TODO
 ==============================================================================
 ISSUES                                                        *newplugin-issues*
 
-Any issues and suggestions are very welcome on the github bugtracker:
-https://github.com/AndrewRadev/newplugin.vim/issues
+Any issues and suggestions are very welcome on the codeberg bugtracker:
+https://codeberg.com/AndrewRadev/newplugin.vim/issues
 
 
 vim:tw=78:sw=4:ft=help:norl:

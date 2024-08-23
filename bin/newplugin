@@ -26,7 +26,7 @@ end
 
 name = ARGV[0]
 
-if File.exists? cwd(name)
+if File.exist? cwd(name)
   puts "#{name} already exists here"
   exit(1)
 end
