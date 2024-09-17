@@ -7,18 +7,28 @@ if [ $# -lt 1 ]; then
   exit 1
 fi
 
+total=$#
+count=0
+
+bold=$(tput bold)
+reset=$(tput sgr0)
+
 for input in "$@"; do
   if [[ $input == *".x265.mp4" ]]; then
-    echo "Skipping $input, ends in .x265.mp4"
+    echo "${bold}Skipping $input, ends in .x265.mp4${reset}"
+    total=$((total - 1))
     continue;
   fi
+
+  count=$((count + 1))
 
   input_basename=${input%.*}
   output="$input_basename.x265.mp4"
 
-  echo "Working on $input..."
+  echo
+  echo "${bold}Working on $input... [$count/$total]${reset}"
   ffmpeg -i "$input" -vcodec libx265 -acodec mp3 "$output"
 
-  echo "Done with $input, removing..."
+  echo "${bold}Done with $input, removing...${reset}"
   rm "$input"
 done
