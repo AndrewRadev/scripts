@@ -1,0 +1,16 @@
+#! /bin/sh
+
+set -e
+
+if [ $# -lt 2 ]; then
+  echo "USAGE: video-change-framerate <framerate> <input> [<output>]"
+  exit 1
+fi
+
+framerate=$1
+input=$2
+
+input_basename=${input%.*}
+output=${3:-"${input_basename}.fps${framerate}.mp4"}
+
+ffmpeg -i "$input" -filter:v fps="$framerate" "$output"
